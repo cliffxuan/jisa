@@ -1,0 +1,10 @@
+[project]
+name = "jisa"
+version = "0.1.0"
+description = "JISA planner — explore, backtest and project Junior ISA portfolios"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+]

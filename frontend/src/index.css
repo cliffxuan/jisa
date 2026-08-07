@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #0a1210;
+  --color-card: #101b16;
+  --color-paper: #f2efe6;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  background: #0a1210;
+  color: #f2efe6;
+  font-family: var(--font-sans);
+  font-feature-settings: "tnum";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tabular numbers for figures */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Graph-paper backdrop for the hero and chart sections */
+.graph-bg {
+  background-image:
+    linear-gradient(rgba(52, 211, 153, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(52, 211, 153, 0.05) 1px, transparent 1px),
+    radial-gradient(ellipse 90% 60% at 50% -10%, rgba(16, 185, 129, 0.14), transparent 70%);
+  background-size: 36px 36px, 36px 36px, 100% 100%;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(242, 239, 230, 0.15);
+  border-radius: 4px;
+}
+
+/* Range sliders — the app's main control, so make them feel good */
+input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  background: rgba(242, 239, 230, 0.12);
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: #34d399;
+  border: 3px solid #0a1210;
+  box-shadow: 0 0 0 1px rgba(52, 211, 153, 0.5), 0 2px 8px rgba(0, 0, 0, 0.5);
+  transition: transform 0.1s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: #34d399;
+  border: 3px solid #0a1210;
+  box-shadow: 0 0 0 1px rgba(52, 211, 153, 0.5), 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Number/date/text inputs share one look */
+.field {
+  border-radius: 0.75rem;
+  border: 1px solid rgba(242, 239, 230, 0.14);
+  background: rgba(10, 18, 16, 0.7);
+  padding: 0.45rem 0.75rem;
+  font-variant-numeric: tabular-nums;
+  width: 100%;
+}
+.field:focus {
+  outline: none;
+  border-color: rgba(52, 211, 153, 0.6);
+  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.15);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.rise {
+  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}

@@ -70,9 +70,10 @@ Data pipeline notes (all in `main.py`):
 Dokku on `nuoya.co.uk`, app `jisa`, domain `jisa.algoentropy.com` (TLS via
 dokku-letsencrypt, configured on the host, not in this repo). Remote `oc` =
 `dokku@nuoya.co.uk:jisa`; `just deploy` = `git push oc main`, which builds the
-Dockerfile in-container. If a GitHub mirror is added later, beware the spacex
-two-remote gotcha (divergent root commits — cherry-pick to mirror, don't
-force-push).
+Dockerfile in-container. GitHub mirror: remote `origin` =
+`git@github.com:cliffxuan/jisa.git`. Unlike spacex, both remotes share one
+history (GitHub's LICENSE root commit was merged in) — push `main` to both,
+no cherry-picking needed.
 
 ## Conventions
 

@@ -105,7 +105,7 @@ function ProductCard({
 
       {p.parentPick && (
         <div className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full border border-amber-400/40 bg-amber-400/10 px-2.5 py-1 text-[11px] font-medium text-amber-200">
-          <Award size={12} /> Parent's pick
+          <Award size={12} /> Classic pick
         </div>
       )}
       {p.riskLevel >= 7 && (

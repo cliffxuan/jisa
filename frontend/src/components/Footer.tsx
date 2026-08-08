@@ -8,7 +8,7 @@ export function Footer() {
           <p className="font-semibold text-stone-300">The small print, in plain English</p>
           <ul className="mt-2 list-disc space-y-1 pl-5">
             <li>
-              This is an educational planning toy built by a parent —{" "}
+              This is an educational planning tool —{" "}
               <strong>not financial advice</strong>. Decisions are yours (and until
               18, legally the registered contact's).
             </li>
@@ -51,8 +51,8 @@ export function Footer() {
             ALGOENTROPY · JISA
           </a>
           <span>
-            Built by a parent, for the next investor in the family · prices via Yahoo
-            Finance · products via{" "}
+            Built for the next generation of investors · prices via Yahoo Finance ·
+            products via{" "}
             <a
               href="https://www.hl.co.uk/investment-services/junior-isa"
               target="_blank"

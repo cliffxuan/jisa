@@ -22,10 +22,10 @@ const MM_ID = "rl-mm";
 
 export function Backtest({
   history,
-  active,
+  profile,
 }: {
   history: HistoryPayload | null;
-  active: Profile;
+  profile: Profile;
 }) {
   const [lump, setLump] = useState(1000);
   const [monthly, setMonthly] = useState(50);
@@ -33,7 +33,7 @@ export function Backtest({
   const [giftMonth, setGiftMonth] = useState(12);
   const [startOffset, setStartOffset] = useState(0); // months from earliest
 
-  const selectedIds = PRODUCTS.filter((p) => (active.allocation[p.id] ?? 0) > 0).map(
+  const selectedIds = PRODUCTS.filter((p) => (profile.allocation[p.id] ?? 0) > 0).map(
     (p) => p.id,
   );
 
@@ -66,12 +66,12 @@ export function Backtest({
     if (!aligned || !startMonth) return null;
     return backtest({
       aligned,
-      weights: active.allocation,
+      weights: profile.allocation,
       startMonth,
       lump,
       schedule,
     });
-  }, [aligned, active.allocation, startMonth, lump, monthly, gift, giftMonth]);
+  }, [aligned, profile.allocation, startMonth, lump, monthly, gift, giftMonth]);
 
   const mmResult = useMemo(() => {
     if (!aligned || !startMonth || !aligned.ids.includes(MM_ID)) return null;
@@ -102,7 +102,7 @@ export function Backtest({
       id="backtest"
       eyebrow="04 · Look Back"
       title="Rewind history with your mix"
-      blurb={`What if ${active.name} had started this exact portfolio years ago? Real monthly prices, real crashes, real recoveries — nothing simulated.`}
+      blurb="What if you had started this exact portfolio years ago? Real monthly prices, real crashes, real recoveries — nothing simulated."
     >
       {!result || !aligned ? (
         <Card>
@@ -205,7 +205,7 @@ export function Backtest({
                     formatter={(v: number, name: string) => [
                       fmtGBP(v),
                       name === "value"
-                        ? `${active.name}'s mix`
+                        ? "Your mix"
                         : name === "cash"
                           ? "100% money market"
                           : "Paid in",
@@ -249,7 +249,7 @@ export function Backtest({
               </ResponsiveContainer>
             </div>
             <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-stone-500">
-              <LegendDot color={CHART.portfolio} label={`${active.name}'s mix`} />
+              <LegendDot color={CHART.portfolio} label={"Your mix"} />
               <LegendDot color={CHART.cash} label="100% money market" />
               <LegendDot color={CHART.paidIn} label="Money paid in" />
               {dd && <LegendDot color={CHART.bad} label="Worst stretch" />}

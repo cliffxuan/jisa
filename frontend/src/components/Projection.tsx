@@ -30,36 +30,36 @@ function monthsBetween(fromDate: Date, toMonth: string): number {
 
 export function Projection({
   history,
-  active,
+  profile,
 }: {
   history: HistoryPayload | null;
-  active: Profile;
+  profile: Profile;
 }) {
   const now = new Date();
-  const loggedTotal = active.contributions.reduce((a, c) => a + c.amount, 0);
+  const loggedTotal = profile.contributions.reduce((a, c) => a + c.amount, 0);
   const [balance, setBalance] = useState(() =>
-    Math.round(active.startingBalance + loggedTotal),
+    Math.round(profile.startingBalance + loggedTotal),
   );
-  const [monthly, setMonthly] = useState(active.assumptions.monthly);
-  const [gift, setGift] = useState(active.assumptions.annualGift);
-  const [giftMonth, setGiftMonth] = useState(active.assumptions.giftMonth);
+  const [monthly, setMonthly] = useState(profile.assumptions.monthly);
+  const [gift, setGift] = useState(profile.assumptions.annualGift);
+  const [giftMonth, setGiftMonth] = useState(profile.assumptions.giftMonth);
   const [horizon, setHorizon] = useState<18 | 25>(18);
   const [mode, setMode] = useState<Mode>("expected");
   const [seed, setSeed] = useState(42);
 
-  const selectedIds = PRODUCTS.filter((p) => (active.allocation[p.id] ?? 0) > 0).map(
+  const selectedIds = PRODUCTS.filter((p) => (profile.allocation[p.id] ?? 0) > 0).map(
     (p) => p.id,
   );
 
-  const months = Math.max(12, monthsBetween(now, monthTurning(active.dob, horizon)));
-  const month18 = monthTurning(active.dob, 18);
-  const age = ageAt(active.dob);
+  const months = Math.max(12, monthsBetween(now, monthTurning(profile.dob, horizon)));
+  const month18 = monthTurning(profile.dob, 18);
+  const age = ageAt(profile.dob);
 
   // Expected return blends the products' stated long-run assumptions; the
   // band width comes from the mix's real historical volatility when we have
   // enough of it.
   const { mu, sigma, pool } = useMemo(() => {
-    const w = normalizeWeights(active.allocation, selectedIds);
+    const w = normalizeWeights(profile.allocation, selectedIds);
     const mu = selectedIds.reduce(
       (a, id, i) => a + PRODUCTS.find((p) => p.id === id)!.assumedReturn * w[i],
       0,
@@ -72,21 +72,21 @@ export function Projection({
     if (history && selectedIds.length > 0) {
       const aligned = alignSeries(history, selectedIds);
       if (aligned && aligned.ids.length === selectedIds.length) {
-        pool = portfolioReturns(aligned, active.allocation);
+        pool = portfolioReturns(aligned, profile.allocation);
         const stats = annualizedStats(pool);
         if (stats && stats.months >= 24) sigma = stats.vol;
       }
     }
     return { mu, sigma, pool };
-  }, [history, active.allocation, selectedIds.join(",")]);
+  }, [history, profile.allocation, selectedIds.join(",")]);
 
   const usedThisTaxYear = useMemo(() => {
     const nowIso = now.toISOString().slice(0, 10);
     const ty = taxYearOfDate(nowIso);
-    return active.contributions
+    return profile.contributions
       .filter((c) => taxYearOfDate(c.date) === ty)
       .reduce((a, c) => a + c.amount, 0);
-  }, [active.contributions]);
+  }, [profile.contributions]);
 
   const schedule = { monthly, annualGift: gift, giftMonth };
   const projected = useMemo(
@@ -168,8 +168,8 @@ export function Projection({
     <Section
       id="projection"
       eyebrow="05 · Look Forward"
-      title={`Fast-forward ${active.name} to ${horizon}`}
-      blurb={`${active.name} is ${age}. The amber line marks 18 — the moment the JISA unlocks and becomes an adult ISA. Nobody knows the future, so we show a range, not a promise.`}
+      title={`Fast-forward to ${horizon}`}
+      blurb={`You're ${age}. The amber line marks 18 — the moment the JISA unlocks and becomes yours as an adult ISA. Nobody knows the future, so we show a range, not a promise.`}
     >
       <div className="space-y-5">
         <Card>

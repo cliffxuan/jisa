@@ -4,6 +4,27 @@
   "jisaAnnualLimit": 9000,
   "products": [
     {
+      "id": "hl-cash",
+      "name": "Cash in your HL account",
+      "shareClass": "Uninvested cash",
+      "ticker": "",
+      "isin": "",
+      "type": "cash",
+      "assetClass": "cash",
+      "riskLevel": 1,
+      "ocf": 0,
+      "assumedReturn": 0.008,
+      "assumedVol": 0.001,
+      "core": true,
+      "synthetic": true,
+      "blurb": "Money that's in the JISA but not invested in anything. HL pays interest on it — currently just 0.80% a year.",
+      "whatYouOwn": "Pounds, sitting in the account. Perfectly safe, permanently sleepy.",
+      "goodFor": "The few days between a gift arriving and you deciding where it goes.",
+      "watchOut": "At 0.80% it grows slower than prices rise — leave money here for years and it quietly shrinks in real terms.",
+      "education": "Cash feels like the safe choice because the number never goes down. But there's a hidden cost: inflation. If prices rise 3% a year and your cash earns 0.8%, you're losing about 2% of real spending power every year without seeing it. That's why 'doing nothing' is actually a decision too — and why the money market fund (same safety idea, ~4x the interest) exists.",
+      "hlUrl": "https://www.hl.co.uk/charges-and-interest-rates"
+    },
+    {
       "id": "rl-mm",
       "name": "Royal London Short Term Money Market",
       "shareClass": "Class Y — Accumulation",
@@ -20,7 +41,9 @@
       "whatYouOwn": "Very short-term loans to big banks and the UK government — the safest, dullest corner of finance.",
       "goodFor": "Money you might want soon, or parking cash while you decide what to do with it.",
       "watchOut": "It almost never falls, but over years it usually grows much slower than shares. Inflation can quietly nibble at it.",
-      "hlUrl": "https://www.hl.co.uk/funds/fund-discounts,-prices--and--factsheets/search-results/r/royal-london-short-term-money-market-class-y-accumulation"
+      "hlUrl": "https://www.hl.co.uk/funds/fund-discounts,-prices--and--factsheets/search-results/r/royal-london-short-term-money-market-class-y-accumulation",
+      "education": "A money market fund is what cash wants to be when it grows up. It pools everyone's money and lends it out ultra-short-term — overnight to a few weeks — to big banks and the government, collecting close to the Bank of England base rate. Compare that with the 0.80% HL pays on idle cash: same 'it basically never goes down' feel, several times the interest. The catch? When interest rates fall, its return falls with them, and it will never compound like shares over a decade.",
+      "core": true
     },
     {
       "id": "vags",
@@ -38,7 +61,8 @@
       "whatYouOwn": "Loans to governments (US, UK, Japan…) and solid companies, all converted back into pounds.",
       "goodFor": "Steadier growth than shares, with smaller ups and downs. The classic 'shock absorber' in a portfolio.",
       "watchOut": "Not risk-free — when interest rates jumped in 2022, bond funds fell too. Slower long-run growth than shares.",
-      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/v/vanguard-global-aggreg-bond-ucits-etf-h-acc"
+      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/v/vanguard-global-aggreg-bond-ucits-etf-h-acc",
+      "education": "A bond is an IOU: you lend a government or company money, they pay you interest and give it back later. This fund holds thousands of IOUs from all over the world, 'hedged' so currency swings don't add noise. Bonds sit between cash and shares: more return than cash, less drama than shares. Why it might interest you: it's the classic way to smooth a portfolio's ride without parking money at cash rates."
     },
     {
       "id": "gilts",
@@ -56,7 +80,8 @@
       "whatYouOwn": "UK government bonds of all lengths, from a few years to decades.",
       "goodFor": "A calmer ride than shares, backed by the UK Treasury.",
       "watchOut": "Longer-dated gilts wobble when interest rates move — 2022 was a rough year even for 'safe' gilts.",
-      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/v/vanguard-uk-gilt-ucits-etf-accumulation"
+      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/v/vanguard-uk-gilt-ucits-etf-accumulation",
+      "education": "Gilts are the UK government's IOUs — named after the gilt-edged paper they were once printed on. Lending to your own government in your own currency is about as safe as lending gets, but the *price* of a gilt still moves when interest rates move (2022 proved that painfully). Why it might interest you: it's the purest way to see how bonds actually behave, and it pays more than cash."
     },
     {
       "id": "ls60",
@@ -74,7 +99,8 @@
       "whatYouOwn": "Thousands of global shares plus a big cushion of bonds, rebalanced for you.",
       "goodFor": "A one-decision portfolio if you want growth but hate big swings.",
       "watchOut": "The bond cushion softens crashes but also slows the climb in strong years.",
-      "hlUrl": "https://www.hl.co.uk/funds/fund-discounts,-prices--and--factsheets/search-results/v/vanguard-lifestrategy-60-equity-accumulation"
+      "hlUrl": "https://www.hl.co.uk/funds/fund-discounts,-prices--and--factsheets/search-results/v/vanguard-lifestrategy-60-equity-accumulation",
+      "education": "This is a whole strategy in one fund: roughly 60% world shares, 40% bonds, automatically rebalanced so it never drifts. Vanguard runs versions from 20% to 100% equity — the number is the throttle. Why it might interest you: if choosing and rebalancing funds sounds like homework, one LifeStrategy fund genuinely is a complete, sensible portfolio."
     },
     {
       "id": "ls80",
@@ -92,7 +118,8 @@
       "whatYouOwn": "Mostly global shares with a modest bond cushion, rebalanced automatically.",
       "goodFor": "Long horizons (like a JISA!) when you want mostly-shares growth with a little padding.",
       "watchOut": "In a crash it behaves much more like a share fund than a bond fund.",
-      "hlUrl": "https://www.hl.co.uk/funds/fund-discounts,-prices--and--factsheets/search-results/v/vanguard-lifestrategy-80-equity-accumulation"
+      "hlUrl": "https://www.hl.co.uk/funds/fund-discounts,-prices--and--factsheets/search-results/v/vanguard-lifestrategy-80-equity-accumulation",
+      "education": "Same idea as LifeStrategy 60 with the throttle at 80% shares. For money locked up for years — like a JISA — many people argue the higher equity share earns its keep, because you have time to recover from crashes. Why it might interest you: near-full stock market growth, but the 20% bond cushion takes a little sting out of the bad years."
     },
     {
       "id": "vukg",
@@ -110,7 +137,8 @@
       "whatYouOwn": "A slice of the UK's corporate giants (which earn most of their money abroad, fun fact).",
       "goodFor": "Backing big, established British-listed businesses in one buy.",
       "watchOut": "Just one country's market, light on tech — it has lagged the US badly over the last decade. That could reverse. Or not.",
-      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/v/vanguard-ftse-100-ucits-etf-gbp-acc"
+      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/v/vanguard-ftse-100-ucits-etf-gbp-acc",
+      "education": "The FTSE 100 is the UK's famous share index — the hundred biggest companies listed in London. Oddly, it's not really a bet on Britain: those firms earn about three-quarters of their money overseas. Why it might interest you: household names, solid dividends, and it often behaves differently from the US market — which is exactly what diversification means."
     },
     {
       "id": "vhvg",
@@ -128,7 +156,8 @@
       "whatYouOwn": "Big and mid-sized companies from developed countries. Roughly two-thirds is the US.",
       "goodFor": "Broad global growth without betting on any one country.",
       "watchOut": "It's still all shares — expect drops of 20%+ some years. Skips emerging markets like India and China.",
-      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/v/vanguard-ftse-developed-world-ucits-etf"
+      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/v/vanguard-ftse-developed-world-ucits-etf",
+      "education": "One ticket, every rich-world stock market: the US, Japan, Europe, Australia and more, weighted by size. You stop asking 'which country will win?' and just own them all. Why it might interest you: it's the S&P 500's more diversified cousin — you keep most of the US growth engine but aren't betting everything on one country."
     },
     {
       "id": "vwrp",
@@ -146,7 +175,8 @@
       "whatYouOwn": "A tiny slice of almost every major listed company on Earth, weighted by size.",
       "goodFor": "The simplest way to bet on the whole world economy and stop worrying about picking winners.",
       "watchOut": "Whole-world still means share-market swings — it fell about a third in March 2020, then recovered.",
-      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/v/vanguard-ftse-all-world-ucits-etf-usd-acc"
+      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/v/vanguard-ftse-all-world-ucits-etf-usd-acc",
+      "education": "The widest net there is: developed AND emerging markets, ~3,500 companies, weighted by size. If humanity's businesses collectively grow over the next decade, this fund collects. Why it might interest you: it's the closest thing to 'just buy everything' — the single fund many long-term investors say is all anyone really needs."
     },
     {
       "id": "fwrg",
@@ -164,7 +194,8 @@
       "whatYouOwn": "The same ~3,500-company world index, for a lower yearly fee.",
       "goodFor": "Whole-world investing while keeping costs razor thin.",
       "watchOut": "Launched in 2023, so its own track record is short — backtests using it can't look far back.",
-      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/i/invesco-ftse-all-world-ucits-etf-usd-acc"
+      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/i/invesco-ftse-all-world-ucits-etf-usd-acc",
+      "education": "Tracks the same all-world index as VWRP but charges 0.15% instead of 0.22%. Fees compound just like returns do — a few hundredths of a percent saved every year quietly adds up over decades. Why it might interest you: it's a live lesson in being a cost-conscious investor; the trade-off is a short track record (launched 2023)."
     },
     {
       "id": "vuag",
@@ -183,7 +214,9 @@
       "whatYouOwn": "America's corporate heavyweights, the most-watched stock index in the world.",
       "goodFor": "Long-run growth powered by the world's largest economy and its tech giants.",
       "watchOut": "One country, priced in dollars — the pound/dollar rate adds extra wiggle, and US shares can crash hard.",
-      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/v/vanguard-funds-plc-s-and-p-500-ucits-etf-usd"
+      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/v/vanguard-funds-plc-s-and-p-500-ucits-etf-usd",
+      "education": "The S&P 500 is the 500 largest US companies — and because the US market has been the world's growth engine, 'just buy the S&P' is the most famous investing advice there is (Warren Buffett's pick for his own family). Why it might interest you: decade-long returns have been outstanding and the 0.07% fee is nearly free. The flip side: it's one country, heavy in tech, priced in dollars — when America sneezes, this fund catches the cold.",
+      "core": true
     },
     {
       "id": "vfeg",
@@ -201,7 +234,8 @@
       "whatYouOwn": "Over 2,000 companies from emerging economies — think Tencent, TSMC, Reliance.",
       "goodFor": "A growth kicker alongside a developed-world core; these economies are where much of the world's growth happens.",
       "watchOut": "Bigger swings, currency wobbles and political surprises. Best kept as a slice, not the whole pie.",
-      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/v/vanguard-ftse-emerging-markets-ucits-etf2"
+      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/v/vanguard-ftse-emerging-markets-ucits-etf2",
+      "education": "Emerging markets are countries whose economies are still industrialising fast — China, India, Taiwan, Brazil. Growth *can* be explosive, but political risk, currency swings and rough patches come with it. Why it might interest you: a small slice adds exposure to where most of the world's people (and future customers) actually live."
     },
     {
       "id": "cnx1",
@@ -220,7 +254,16 @@
       "whatYouOwn": "A concentrated bet on US tech — the Nasdaq's giants, minus the banks.",
       "goodFor": "A small 'satellite' slice if you believe in tech and can stomach the ride.",
       "watchOut": "In 2000–2002 the Nasdaq lost ~78% and took 15 years to fully recover. It fell ~33% in 2022 alone. Small doses only.",
-      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/i/ishares-vii-plc-nasdaq-100-ucits-etf-usd-ac"
+      "hlUrl": "https://www.hl.co.uk/shares/shares-search-results/i/ishares-vii-plc-nasdaq-100-ucits-etf-usd-ac",
+      "education": "The Nasdaq 100 is a concentrated bet on big tech: Apple, Microsoft, Nvidia and friends, minus banks. Over the last 15 years it made more money than almost anything else you could have bought. But concentration cuts both ways: in the dot-com crash it lost ~78% and needed 15 years to fully recover. Why it might interest you: it teaches the sharpest lesson in investing — the ride you must survive to collect the reward. Small doses."
     }
-  ]
+  ],
+  "platform": {
+    "name": "HL Junior ISA",
+    "annualCharge": 0,
+    "dealing": "Free online dealing for funds, shares and ETFs",
+    "cashRateAER": 0.008,
+    "note": "0% annual account charge on the HL Junior ISA; fund managers' OCFs are already inside fund prices. Cash rate 0.80% AER (variable), checked Aug 2026.",
+    "chargesUrl": "https://www.hl.co.uk/charges-and-interest-rates"
+  }
 }

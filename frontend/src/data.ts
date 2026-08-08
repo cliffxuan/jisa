@@ -6,22 +6,37 @@ export interface Product {
   shareClass: string;
   ticker: string;
   isin: string;
-  type: "etf" | "fund";
+  type: "etf" | "fund" | "cash";
   assetClass: string;
   riskLevel: number;
   ocf: number;
   assumedReturn: number;
   assumedVol: number;
   parentPick?: boolean;
+  core?: boolean;
+  synthetic?: boolean;
   historyFrom?: string;
   blurb: string;
   whatYouOwn: string;
   goodFor: string;
   watchOut: string;
+  education: string;
   hlUrl: string;
 }
 
+export interface Platform {
+  name: string;
+  annualCharge: number;
+  dealing: string;
+  cashRateAER: number;
+  note: string;
+  chargesUrl: string;
+}
+
 export const PRODUCTS = raw.products as Product[];
+export const CORE_PRODUCTS = PRODUCTS.filter((p) => p.core);
+export const EXTRA_PRODUCTS = PRODUCTS.filter((p) => !p.core);
+export const PLATFORM = raw.platform as Platform;
 export const JISA_LIMIT: number = raw.jisaAnnualLimit;
 export const DATA_AS_OF: string = raw.asOf;
 

@@ -1,4 +1,6 @@
-// Per-child profiles live in localStorage only — no accounts, no server.
+// One personal profile, stored in this browser only — no accounts, no server.
+// Each child uses the site on their own device/browser, so the profile is
+// singular and personal.
 
 import type { ContribSchedule } from "./calc/projection";
 
@@ -10,7 +12,6 @@ export interface Contribution {
 }
 
 export interface Profile {
-  id: string;
   name: string;
   dob: string; // "YYYY-MM-DD"
   startingBalance: number;
@@ -20,52 +21,87 @@ export interface Profile {
 }
 
 export interface Store {
-  version: 1;
-  activeProfileId: string;
-  profiles: Profile[];
+  version: 2;
+  profile: Profile;
 }
 
-const KEY = "jisa.profiles.v1";
+const KEY = "jisa.profile.v2";
+const LEGACY_KEY = "jisa.profiles.v1"; // pre-2026-08 multi-child schema
 
-/** Two editable starter profiles matching "a 15yo and a 13yo" (dobs are
- * placeholders — the Plan section nudges you to set real ones). */
 export function seedStore(): Store {
   const year = new Date().getFullYear();
   return {
-    version: 1,
-    activeProfileId: "child-1",
-    profiles: [
-      {
-        id: "child-1",
-        name: "Child 1",
-        dob: `${year - 15}-01-01`,
-        startingBalance: 0,
-        allocation: { "rl-mm": 40, vuag: 60 },
-        contributions: [],
-        assumptions: { monthly: 0, annualGift: 500, giftMonth: 12 },
-      },
-      {
-        id: "child-2",
-        name: "Child 2",
-        dob: `${year - 13}-01-01`,
-        startingBalance: 0,
-        allocation: { "rl-mm": 40, vuag: 60 },
-        contributions: [],
-        assumptions: { monthly: 0, annualGift: 500, giftMonth: 12 },
-      },
-    ],
+    version: 2,
+    profile: {
+      name: "Me",
+      dob: `${year - 15}-01-01`,
+      startingBalance: 0,
+      allocation: { "rl-mm": 40, vuag: 60 },
+      contributions: [],
+      assumptions: { monthly: 0, annualGift: 500, giftMonth: 12 },
+    },
   };
+}
+
+function isProfileLike(p: unknown): p is Profile {
+  const q = p as Profile;
+  return (
+    !!q &&
+    typeof q.name === "string" &&
+    typeof q.dob === "string" &&
+    typeof q.allocation === "object"
+  );
+}
+
+function normalizeProfile(p: Profile): Profile {
+  return {
+    name: p.name || "Me",
+    dob: p.dob,
+    startingBalance: Number(p.startingBalance) || 0,
+    allocation: p.allocation && typeof p.allocation === "object" ? p.allocation : {},
+    contributions: Array.isArray(p.contributions) ? p.contributions : [],
+    assumptions: p.assumptions ?? { monthly: 0, annualGift: 0, giftMonth: 12 },
+  };
+}
+
+/** Old multi-child store -> the active child's profile. */
+function migrateLegacy(raw: string): Store | null {
+  try {
+    const old = JSON.parse(raw) as {
+      version: number;
+      activeProfileId?: string;
+      profiles?: (Profile & { id: string })[];
+    };
+    if (old.version !== 1 || !Array.isArray(old.profiles) || old.profiles.length === 0) {
+      return null;
+    }
+    const picked =
+      old.profiles.find((p) => p.id === old.activeProfileId) ?? old.profiles[0];
+    if (!isProfileLike(picked)) return null;
+    return { version: 2, profile: normalizeProfile(picked) };
+  } catch {
+    return null;
+  }
 }
 
 export function loadStore(): Store {
   try {
     const raw = localStorage.getItem(KEY);
-    if (!raw) return seedStore();
-    const parsed = JSON.parse(raw) as Store;
-    if (parsed.version !== 1 || !Array.isArray(parsed.profiles) || parsed.profiles.length === 0) {
-      return seedStore();
+    if (raw) {
+      const parsed = JSON.parse(raw) as Store;
+      if (parsed.version === 2 && isProfileLike(parsed.profile)) {
+        return { version: 2, profile: normalizeProfile(parsed.profile) };
+      }
     }
-    return parsed;
+    const legacy = localStorage.getItem(LEGACY_KEY);
+    if (legacy) {
+      const migrated = migrateLegacy(legacy);
+      if (migrated) {
+        saveStore(migrated);
+        return migrated;
+      }
+    }
+    return seedStore();
   } catch {
     return seedStore();
   }
@@ -90,26 +126,19 @@ export function exportStore(store: Store): void {
   URL.revokeObjectURL(url);
 }
 
-/** Parse an exported backup. Throws with a readable message if invalid. */
+/** Parse an exported backup (v2, or a legacy v1 multi-child backup). Throws
+ * with a readable message if invalid. */
 export function parseImport(text: string): Store {
-  const parsed = JSON.parse(text) as Store;
-  if (parsed.version !== 1) throw new Error("Unsupported backup version");
-  if (!Array.isArray(parsed.profiles) || parsed.profiles.length === 0) {
-    throw new Error("Backup contains no profiles");
+  const parsed = JSON.parse(text) as { version?: number };
+  if (parsed.version === 1) {
+    const migrated = migrateLegacy(text);
+    if (!migrated) throw new Error("Old backup couldn't be read");
+    return migrated;
   }
-  for (const p of parsed.profiles) {
-    if (typeof p.id !== "string" || typeof p.name !== "string" || typeof p.dob !== "string") {
-      throw new Error("Backup profile is missing fields");
-    }
-    p.contributions = Array.isArray(p.contributions) ? p.contributions : [];
-    p.allocation = p.allocation && typeof p.allocation === "object" ? p.allocation : {};
-    p.startingBalance = Number(p.startingBalance) || 0;
-    p.assumptions = p.assumptions ?? { monthly: 0, annualGift: 0, giftMonth: 12 };
-  }
-  if (!parsed.profiles.some((p) => p.id === parsed.activeProfileId)) {
-    parsed.activeProfileId = parsed.profiles[0].id;
-  }
-  return parsed;
+  const v2 = parsed as Store;
+  if (v2.version !== 2) throw new Error("Unsupported backup version");
+  if (!isProfileLike(v2.profile)) throw new Error("Backup profile is missing fields");
+  return { version: 2, profile: normalizeProfile(v2.profile) };
 }
 
 let counter = 0;

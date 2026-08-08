@@ -1,4 +1,4 @@
-import { DATA_AS_OF } from "../data";
+import { DATA_AS_OF, PLATFORM } from "../data";
 
 export function Footer() {
   return (
@@ -17,10 +17,24 @@ export function Footer() {
               backtest and every shuffled future here is history wearing a costume.
             </li>
             <li>
+              Fees, honestly: the {PLATFORM.name} charges{" "}
+              <strong>0% per year and dealing is free</strong> (
+              <a
+                href={PLATFORM.chargesUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline decoration-stone-700 underline-offset-2"
+              >
+                HL's charges page
+              </a>
+              ), fund managers' OCFs are already inside the prices shown, and cash
+              earns {(PLATFORM.cashRateAER * 100).toFixed(2)}% AER (variable).
+            </li>
+            <li>
               Simplifications we made: accumulation-class prices stand in for total
-              returns; mixes are rebalanced monthly for free; fund charges are in the
-              prices but platform fees aren't; the £9,000 cap is applied by calendar
-              month, not exact day.
+              returns; mixes are rebalanced monthly for free; the £9,000 cap is
+              applied by calendar month, not exact day; HL cash interest is modelled
+              at today's rate even though it moves with Bank of England decisions.
             </li>
             <li>
               Prices come from Yahoo Finance, refreshed roughly every 12 hours, and
@@ -37,8 +51,8 @@ export function Footer() {
             ALGOENTROPY · JISA
           </a>
           <span>
-            Built for two future investors, ages 15 and 13 · prices via Yahoo Finance ·
-            products via{" "}
+            Built by a parent, for the next investor in the family · prices via Yahoo
+            Finance · products via{" "}
             <a
               href="https://www.hl.co.uk/investment-services/junior-isa"
               target="_blank"

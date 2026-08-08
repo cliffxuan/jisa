@@ -12,7 +12,6 @@ import {
 } from "recharts";
 import { Download, Plus, Trash2, Upload } from "lucide-react";
 import { Card, Section, Stat } from "./Section";
-import { ChildTabs } from "./Builder";
 import { CHART, axisProps, tooltipStyle } from "../chartTheme";
 import { JISA_LIMIT, PRODUCTS, fmtDate, fmtGBP, fmtMonth } from "../data";
 import type { HistoryPayload } from "../useHistory";
@@ -32,47 +31,49 @@ export function Plan({
   history,
   store,
   setStore,
-  active,
+  profile,
   updateProfile,
 }: {
   history: HistoryPayload | null;
   store: Store;
   setStore: (s: Store) => void;
-  active: Profile;
-  updateProfile: (id: string, patch: Partial<Profile>) => void;
+  profile: Profile;
+  updateProfile: (patch: Partial<Profile>) => void;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [importErr, setImportErr] = useState<string | null>(null);
-  const [draft, setDraft] = useState({ date: new Date().toISOString().slice(0, 10), amount: "", note: "" });
-
-  const setActive = (id: string) => setStore({ ...store, activeProfileId: id });
+  const [draft, setDraft] = useState({
+    date: new Date().toISOString().slice(0, 10),
+    amount: "",
+    note: "",
+  });
 
   const nowIso = new Date().toISOString().slice(0, 10);
   const currentTaxYear = taxYearOfDate(nowIso);
   const byTaxYear = useMemo(() => {
     const map = new Map<number, number>();
-    for (const c of active.contributions) {
+    for (const c of profile.contributions) {
       const ty = taxYearOfDate(c.date);
       map.set(ty, (map.get(ty) ?? 0) + c.amount);
     }
     return [...map.entries()].sort((a, b) => a[0] - b[0]);
-  }, [active.contributions]);
+  }, [profile.contributions]);
   const usedThisYear = byTaxYear.find(([y]) => y === currentTaxYear)?.[1] ?? 0;
 
   const addContribution = () => {
     const amount = Number(draft.amount);
     if (!draft.date || !Number.isFinite(amount) || amount <= 0) return;
     const next = [
-      ...active.contributions,
+      ...profile.contributions,
       { id: newId("c"), date: draft.date, amount, note: draft.note.trim() },
     ].sort((a, b) => a.date.localeCompare(b.date));
-    updateProfile(active.id, { contributions: next });
+    updateProfile({ contributions: next });
     setDraft({ ...draft, amount: "", note: "" });
   };
 
   const removeContribution = (cid: string) => {
-    updateProfile(active.id, {
-      contributions: active.contributions.filter((c) => c.id !== cid),
+    updateProfile({
+      contributions: profile.contributions.filter((c) => c.id !== cid),
     });
   };
 
@@ -89,29 +90,29 @@ export function Plan({
   // Actual trajectory: replay logged contributions through real prices at the
   // saved mix, then extend the middle expected path out to 18.
   const trajectory = useMemo(() => {
-    const selectedIds = PRODUCTS.filter((p) => (active.allocation[p.id] ?? 0) > 0).map(
+    const selectedIds = PRODUCTS.filter((p) => (profile.allocation[p.id] ?? 0) > 0).map(
       (p) => p.id,
     );
-    if (!history || selectedIds.length === 0 || active.contributions.length === 0) {
+    if (!history || selectedIds.length === 0 || profile.contributions.length === 0) {
       return null;
     }
     const aligned = alignSeries(history, selectedIds);
     if (!aligned) return null;
-    const firstMonth = active.contributions[0].date.slice(0, 7);
+    const firstMonth = profile.contributions[0].date.slice(0, 7);
     const startMonth = aligned.months.find((m) => m >= firstMonth);
     if (!startMonth) return null;
     const actual = backtest({
       aligned,
-      weights: active.allocation,
+      weights: profile.allocation,
       startMonth,
-      lump: active.startingBalance,
-      contributions: active.contributions,
+      lump: profile.startingBalance,
+      contributions: profile.contributions,
     });
     if (!actual) return null;
 
     const lastActual = actual.points[actual.points.length - 1];
     const monthsTo18 = (() => {
-      const m18 = monthTurning(active.dob, 18);
+      const m18 = monthTurning(profile.dob, 18);
       const [y, m] = lastActual.month.split("-").map(Number);
       const [y18, mm18] = m18.split("-").map(Number);
       return Math.max(0, (y18 - y) * 12 + (mm18 - m));
@@ -122,18 +123,18 @@ export function Plan({
             start: lastActual.value,
             from: new Date(`${lastActual.month}-15`),
             months: monthsTo18,
-            annualReturn: PRODUCTS.filter((p) => (active.allocation[p.id] ?? 0) > 0).reduce(
+            annualReturn: PRODUCTS.filter((p) => (profile.allocation[p.id] ?? 0) > 0).reduce(
               (a, p, _, arr) => {
-                const total = arr.reduce((x, q) => x + (active.allocation[q.id] ?? 0), 0);
-                return a + p.assumedReturn * ((active.allocation[p.id] ?? 0) / total);
+                const total = arr.reduce((x, q) => x + (profile.allocation[q.id] ?? 0), 0);
+                return a + p.assumedReturn * ((profile.allocation[p.id] ?? 0) / total);
               },
               0,
             ),
             annualVol: 0,
             schedule: {
-              monthly: active.assumptions.monthly,
-              annualGift: active.assumptions.annualGift,
-              giftMonth: active.assumptions.giftMonth,
+              monthly: profile.assumptions.monthly,
+              annualGift: profile.assumptions.annualGift,
+              giftMonth: profile.assumptions.giftMonth,
             },
             usedThisTaxYear: usedThisYear,
           })
@@ -156,46 +157,43 @@ export function Plan({
       }
     }
     return { rows, actual };
-  }, [history, active, usedThisYear]);
+  }, [history, profile, usedThisYear]);
 
-  const month18 = monthTurning(active.dob, 18);
+  const month18 = monthTurning(profile.dob, 18);
 
   return (
     <Section
       id="plan"
       eyebrow="06 · Your Plan"
       title="Log the real money"
-      blurb="Every birthday tenner from grandma, recorded here. Saved only in this browser — export a backup now and then. Nothing leaves your device."
+      blurb="Every birthday tenner from grandma, recorded here. Saved only in this browser — it's your private ledger. Export a backup now and then; nothing leaves your device."
     >
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <ChildTabs profiles={store.profiles} activeId={active.id} onSelect={setActive} />
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => exportStore(store)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-stone-100/15 px-3 py-1.5 text-xs text-stone-300 transition hover:border-emerald-400/40"
-          >
-            <Download size={13} /> Export backup
-          </button>
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            className="inline-flex items-center gap-1.5 rounded-full border border-stone-100/15 px-3 py-1.5 text-xs text-stone-300 transition hover:border-emerald-400/40"
-          >
-            <Upload size={13} /> Import
-          </button>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="application/json"
-            className="hidden"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) onImport(f);
-              e.target.value = "";
-            }}
-          />
-        </div>
+      <div className="mb-6 flex flex-wrap items-center justify-end gap-2">
+        <button
+          type="button"
+          onClick={() => exportStore(store)}
+          className="inline-flex items-center gap-1.5 rounded-full border border-stone-100/15 px-3 py-1.5 text-xs text-stone-300 transition hover:border-emerald-400/40"
+        >
+          <Download size={13} /> Export backup
+        </button>
+        <button
+          type="button"
+          onClick={() => fileRef.current?.click()}
+          className="inline-flex items-center gap-1.5 rounded-full border border-stone-100/15 px-3 py-1.5 text-xs text-stone-300 transition hover:border-emerald-400/40"
+        >
+          <Upload size={13} /> Import
+        </button>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="application/json"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) onImport(f);
+            e.target.value = "";
+          }}
+        />
       </div>
       {importErr && (
         <p className="mb-4 rounded-lg border border-rose-400/30 bg-rose-400/10 px-3 py-2 text-xs text-rose-200">
@@ -206,14 +204,14 @@ export function Plan({
       <div className="grid gap-5 lg:grid-cols-[1fr_1.3fr]">
         <div className="space-y-5">
           <Card>
-            <h3 className="text-sm font-semibold text-stone-200">About {active.name}</h3>
+            <h3 className="text-sm font-semibold text-stone-200">About you</h3>
             <div className="mt-3 grid grid-cols-2 gap-3">
               <label className="block text-xs text-stone-400">
                 Name
                 <input
                   type="text"
-                  value={active.name}
-                  onChange={(e) => updateProfile(active.id, { name: e.target.value })}
+                  value={profile.name}
+                  onChange={(e) => updateProfile({ name: e.target.value })}
                   className="field mt-1"
                 />
               </label>
@@ -221,8 +219,8 @@ export function Plan({
                 Date of birth
                 <input
                   type="date"
-                  value={active.dob}
-                  onChange={(e) => e.target.value && updateProfile(active.id, { dob: e.target.value })}
+                  value={profile.dob}
+                  onChange={(e) => e.target.value && updateProfile({ dob: e.target.value })}
                   className="field mt-1"
                 />
               </label>
@@ -232,9 +230,9 @@ export function Plan({
                   type="number"
                   min={0}
                   step={50}
-                  value={active.startingBalance}
+                  value={profile.startingBalance}
                   onChange={(e) =>
-                    updateProfile(active.id, {
+                    updateProfile({
                       startingBalance: Math.max(0, Number(e.target.value)),
                     })
                   }
@@ -243,7 +241,7 @@ export function Plan({
               </label>
             </div>
             <p className="mt-3 text-xs text-stone-500 tabular">
-              {ageAt(active.dob)} years old · JISA unlocks {fmtMonth(month18)}
+              {ageAt(profile.dob)} years old · JISA unlocks {fmtMonth(month18)}
             </p>
           </Card>
 
@@ -311,9 +309,9 @@ export function Plan({
                 <Plus size={14} /> Add
               </button>
             </div>
-            {active.contributions.length > 0 ? (
+            {profile.contributions.length > 0 ? (
               <ul className="mt-4 max-h-56 space-y-1.5 overflow-y-auto pr-1 scrollbar-thin">
-                {[...active.contributions].reverse().map((c) => (
+                {[...profile.contributions].reverse().map((c) => (
                   <li
                     key={c.id}
                     className="flex items-center justify-between gap-2 rounded-lg bg-stone-100/5 px-3 py-1.5 text-xs"
@@ -344,7 +342,7 @@ export function Plan({
 
         <Card>
           <h3 className="text-sm font-semibold text-stone-200">
-            {active.name}'s road to 18
+            {profile.name ? `${profile.name}'s` : "Your"} road to 18
           </h3>
           {trajectory ? (
             <>
@@ -423,14 +421,14 @@ export function Plan({
                 />
               </div>
               <p className="mt-4 text-xs leading-relaxed text-stone-500">
-                The solid line replays {active.name}'s logged gifts through the mix's
-                real price history (as if invested on the day). The dashed line carries
-                on at the mix's assumed growth with the assumptions from Look Forward.
+                The solid line replays your logged gifts through the mix's real price
+                history (as if invested on the day). The dashed line carries on at the
+                mix's assumed growth with the assumptions from Look Forward.
               </p>
             </>
           ) : (
             <p className="py-16 text-center text-sm text-stone-500">
-              {active.contributions.length === 0
+              {profile.contributions.length === 0
                 ? "Log at least one gift (and pick a mix) to draw the road to 18."
                 : "Waiting for price history…"}
             </p>

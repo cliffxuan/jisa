@@ -19,16 +19,9 @@ export default function App() {
     saveStore(store);
   }, [store]);
 
-  const active =
-    store.profiles.find((p) => p.id === store.activeProfileId) ?? store.profiles[0];
-
-  const updateProfile = (id: string, patch: Partial<Profile>) =>
-    setStore((s) => ({
-      ...s,
-      profiles: s.profiles.map((p) => (p.id === id ? { ...p, ...patch } : p)),
-    }));
-
-  const setActive = (id: string) => setStore((s) => ({ ...s, activeProfileId: id }));
+  const profile = store.profile;
+  const updateProfile = (patch: Partial<Profile>) =>
+    setStore((s) => ({ ...s, profile: { ...s.profile, ...patch } }));
 
   // On a fresh load the browser tries to scroll to the URL hash before React
   // has rendered the sections (and async content shifts layout afterwards), so
@@ -70,7 +63,7 @@ export default function App() {
 
   return (
     <div id="top" className="min-h-screen bg-[#0a1210] text-stone-100">
-      <Hero profiles={store.profiles} />
+      <Hero profile={profile} />
       <Nav />
       {err && (
         <div className="mx-auto mt-6 max-w-6xl px-5">
@@ -83,20 +76,14 @@ export default function App() {
       <main>
         <Learn />
         <Products history={history} />
-        <Builder
-          history={history}
-          profiles={store.profiles}
-          active={active}
-          setActive={setActive}
-          updateProfile={updateProfile}
-        />
-        <Backtest history={history} active={active} />
-        <Projection history={history} active={active} />
+        <Builder history={history} profile={profile} updateProfile={updateProfile} />
+        <Backtest history={history} profile={profile} />
+        <Projection history={history} profile={profile} />
         <Plan
           history={history}
           store={store}
           setStore={setStore}
-          active={active}
+          profile={profile}
           updateProfile={updateProfile}
         />
       </main>

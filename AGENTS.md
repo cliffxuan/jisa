@@ -1,11 +1,17 @@
 # Grow It — the Junior ISA planner (jisa.algoentropy.com)
 
-A teen-friendly single-page app for two kids (born ~2010 and ~2012) saving
-grandparents' gift money into Hargreaves Lansdown Junior ISAs. It teaches the
-basics (JISA rules, risk, compounding), presents 12 curated HL-JISA-eligible
-funds/ETFs, and lets each child build a weighted mix, **backtest** it against
-real monthly history, **project** it to age 18 (deterministic band + bootstrap
-Monte Carlo), and **log real contributions** against the £9,000/tax-year cap.
+A teen-friendly single-page app for a kid saving grandparents' gift money into
+a Hargreaves Lansdown Junior ISA. Personal and individual by design — each
+child opens it in their own browser and gets one private profile. It teaches
+the basics (JISA rules, risk, compounding, park-it/lend-it/own-it), leads with
+a simple core trio (HL cash at 0.80% AER · Royal London money market fund ·
+Vanguard S&P 500) with 10 more products behind an "explore" toggle, and lets
+the child build a weighted mix, **backtest** it against real monthly history,
+**project** it to age 18 (deterministic band + bootstrap Monte Carlo), and
+**log real contributions** against the £9,000/tax-year cap. Fees are shown
+honestly: the HL JISA charges 0%/free dealing (verified Aug 2026), fund OCFs
+are already in prices, and `hl-cash` is a synthetic product (no ticker) whose
+series is modelled client-side at the platform's cash rate.
 
 Sibling of `~/dev/spacex` (spacex.algoentropy.com) — same stack, same layout,
 same deploy pattern. When in doubt, do what spacex does.
@@ -22,9 +28,10 @@ same deploy pattern. When in doubt, do what spacex does.
 - **Calculations all live in `frontend/src/calc/`** (returns, jisa tax-year
   rules, projection, montecarlo, backtest) as pure React-free modules. The
   backend only fetches/normalizes/caches prices. Keep it that way.
-- **Profiles** (per-child name, dob, allocation, contribution log) live in
-  localStorage under `jisa.profiles.v1` (`src/storage.ts`), with JSON
-  export/import. No accounts, no server-side storage.
+- **Profile** (name, dob, allocation, contribution log) is singular and lives
+  in localStorage under `jisa.profile.v2` (`src/storage.ts`), with JSON
+  export/import and a silent migration from the legacy multi-child
+  `jisa.profiles.v1`. No accounts, no server-side storage.
 
 ## The one easy mistake
 

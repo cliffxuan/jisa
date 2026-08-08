@@ -4,7 +4,8 @@ import type { Profile } from "../storage";
 import { ageAt } from "../calc/jisa";
 import { JISA_LIMIT, fmtGBP } from "../data";
 
-export function Hero({ profiles }: { profiles: Profile[] }) {
+export function Hero({ profile }: { profile: Profile }) {
+  const age = ageAt(profile.dob);
   return (
     <header className="graph-bg relative overflow-hidden border-b border-emerald-100/10">
       <div className="mx-auto max-w-6xl px-5 pb-16 pt-20 sm:pb-24 sm:pt-28">
@@ -23,9 +24,10 @@ export function Hero({ profiles }: { profiles: Profile[] }) {
           style={{ animationDelay: "0.16s" }}
         >
           Birthday money can sit in a drawer, or it can spend the next few years
-          quietly working for you. This is your planner for a{" "}
-          <strong className="text-stone-100">Junior ISA</strong> — pick real funds,
-          rewind history to see how they behaved, and fast-forward to 18.
+          quietly working for you. This is <em>your</em> planner for{" "}
+          <em>your</em> <strong className="text-stone-100">Junior ISA</strong> —
+          learn the three big ideas, pick real funds, rewind history to see how
+          they behaved, and fast-forward to 18.
         </p>
 
         <div
@@ -49,28 +51,20 @@ export function Hero({ profiles }: { profiles: Profile[] }) {
           />
         </div>
 
-        {profiles.length > 0 && (
-          <div
-            className="rise mt-8 flex flex-wrap gap-2"
-            style={{ animationDelay: "0.32s" }}
+        <div
+          className="rise mt-8 flex flex-wrap gap-2"
+          style={{ animationDelay: "0.32s" }}
+        >
+          <a
+            href="#plan"
+            className="inline-flex items-center gap-2 rounded-full border border-emerald-100/15 bg-emerald-400/5 px-4 py-2 text-sm text-stone-200 transition hover:border-emerald-400/40"
           >
-            {profiles.map((p) => {
-              const age = ageAt(p.dob);
-              return (
-                <a
-                  key={p.id}
-                  href="#plan"
-                  className="inline-flex items-center gap-2 rounded-full border border-emerald-100/15 bg-emerald-400/5 px-4 py-2 text-sm text-stone-200 transition hover:border-emerald-400/40"
-                >
-                  <span className="font-semibold">{p.name}</span>
-                  <span className="text-stone-500 tabular">
-                    {age} · {Math.max(0, 18 - age)} yrs to 18
-                  </span>
-                </a>
-              );
-            })}
-          </div>
-        )}
+            <span className="font-semibold">{profile.name}</span>
+            <span className="text-stone-500 tabular">
+              {age} · {Math.max(0, 18 - age)} yrs until it's yours
+            </span>
+          </a>
+        </div>
       </div>
     </header>
   );

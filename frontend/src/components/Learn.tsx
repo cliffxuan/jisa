@@ -63,6 +63,52 @@ export function Learn() {
 
         <CompoundingDemo />
       </div>
+
+      <Card className="mt-5">
+        <h3 className="font-display text-lg font-semibold text-emerald-300">
+          Park it, lend it, or own it
+        </h3>
+        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-stone-300">
+          Every investment on this page is one of three moves. Your starter trio —
+          picked out below — is exactly one of each:
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-xl border border-sky-400/20 bg-sky-400/5 p-4">
+            <div className="text-sm font-semibold text-sky-300">1 · Park it — cash</div>
+            <p className="mt-2 text-xs leading-relaxed text-stone-400">
+              Money sitting in the HL account earns{" "}
+              <strong className="text-stone-200">0.80%</strong> a year. It never
+              falls, but inflation quietly outruns it. Parking is for days, not
+              years.
+            </p>
+          </div>
+          <div className="rounded-xl border border-emerald-400/20 bg-emerald-400/5 p-4">
+            <div className="text-sm font-semibold text-emerald-300">
+              2 · Lend it — the money market fund
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-stone-400">
+              The Royal London fund lends your money out for days at a time,
+              earning close to the Bank of England rate —{" "}
+              <strong className="text-stone-200">several times</strong> what idle
+              cash earns, with almost the same steadiness.
+            </p>
+          </div>
+          <div className="rounded-xl border border-amber-400/20 bg-amber-400/5 p-4">
+            <div className="text-sm font-semibold text-amber-300">
+              3 · Own it — the S&amp;P 500
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-stone-400">
+              Buying shares means owning slices of real businesses — Apple,
+              Microsoft, Nvidia. Over years, owners have historically earned the
+              most. The price: some years the value drops hard.
+            </p>
+          </div>
+        </div>
+        <p className="mt-4 text-xs text-stone-500">
+          The other nine funds below are variations on moves 2 and 3 — different
+          things to lend to, different things to own.
+        </p>
+      </Card>
     </Section>
   );
 }

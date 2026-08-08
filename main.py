@@ -118,6 +118,8 @@ def history() -> JSONResponse:
     errors: dict[str, str] = {}
     for product in PRODUCTS:
         pid, ticker = product["id"], product["ticker"]
+        if not ticker:  # synthetic products (e.g. HL cash) have no market data
+            continue
         entry = _hist_cache.get(ticker)
         if entry is None or now - entry["ts"] > CACHE_TTL:
             try:

@@ -1,22 +1,42 @@
 import { useMemo, useState } from "react";
-import { Line, LineChart, ResponsiveContainer, YAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  Cell,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { AlertTriangle, Award, ChevronDown, Compass, GraduationCap } from "lucide-react";
-import { Card, Section, SourceLink } from "./Section";
+import { Card, Pill, Section, SourceLink } from "./Section";
 import { RiskDial } from "./Learn";
-import { CHART } from "../chartTheme";
+import { CHART, axisProps, tooltipStyle } from "../chartTheme";
 import {
   CORE_PRODUCTS,
   EXTRA_PRODUCTS,
   PLATFORM,
+  fmtGBP,
   fmtMonth,
   fmtPct,
   type Product,
 } from "../data";
-import type { HistoryPayload } from "../useHistory";
+import type { HistoryPayload, Series } from "../useHistory";
 import { annualizedStats } from "../calc/returns";
+
+type Lookback = 1 | 3 | 5 | 10 | "max";
+const LOOKBACKS: { key: Lookback; label: string }[] = [
+  { key: 1, label: "1 year" },
+  { key: 3, label: "3 years" },
+  { key: 5, label: "5 years" },
+  { key: 10, label: "10 years" },
+  { key: "max", label: "Max" },
+];
 
 export function Products({ history }: { history: HistoryPayload | null }) {
   const [explore, setExplore] = useState(false);
+  const [lookback, setLookback] = useState<Lookback>(10);
 
   return (
     <Section
@@ -25,9 +45,20 @@ export function Products({ history }: { history: HistoryPayload | null }) {
       title="Start with three"
       blurb="One way to park, one way to lend, one way to own. Master these and you understand most of investing — the wider menu is there when you're curious."
     >
+      <div className="mb-6 flex flex-wrap items-center gap-2">
+        <span className="text-xs uppercase tracking-wider text-stone-500">
+          Growth since:
+        </span>
+        {LOOKBACKS.map((lb) => (
+          <Pill key={lb.label} active={lookback === lb.key} onClick={() => setLookback(lb.key)}>
+            {lb.label}
+          </Pill>
+        ))}
+      </div>
+
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {CORE_PRODUCTS.map((p) => (
-          <ProductCard key={p.id} product={p} history={history} defaultOpen />
+          <ProductCard key={p.id} product={p} history={history} lookback={lookback} defaultOpen />
         ))}
       </div>
 
@@ -46,7 +77,7 @@ export function Products({ history }: { history: HistoryPayload | null }) {
       {explore && (
         <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {EXTRA_PRODUCTS.map((p) => (
-            <ProductCard key={p.id} product={p} history={history} />
+            <ProductCard key={p.id} product={p} history={history} lookback={lookback} />
           ))}
         </div>
       )}
@@ -63,20 +94,74 @@ export function Products({ history }: { history: HistoryPayload | null }) {
   );
 }
 
+interface YearBar {
+  year: string;
+  ret: number;
+  ytd: boolean;
+}
+
+/** Calendar-year returns from year-end closes; the current year is YTD. */
+function yearlyReturns(series: Series): YearBar[] {
+  const lastCloseOfYear = new Map<string, number>();
+  series.months.forEach((m, i) => lastCloseOfYear.set(m.slice(0, 4), series.closes[i]));
+  const years = [...lastCloseOfYear.keys()].sort();
+  const lastYear = years[years.length - 1];
+  const out: YearBar[] = [];
+  for (let i = 1; i < years.length; i++) {
+    // Skip gaps (a missing year would silently span two years).
+    if (Number(years[i]) !== Number(years[i - 1]) + 1) continue;
+    out.push({
+      year: years[i],
+      ret: lastCloseOfYear.get(years[i])! / lastCloseOfYear.get(years[i - 1])! - 1,
+      ytd: years[i] === lastYear && !series.months[series.months.length - 1].endsWith("-12"),
+    });
+  }
+  return out;
+}
+
+/** Total growth over the chosen lookback (clamped to available history). */
+function growthSince(
+  series: Series,
+  lookback: Lookback,
+): { pct: number; from: string; clamped: boolean } | null {
+  const n = series.months.length;
+  if (n < 2) return null;
+  let idx = 0;
+  let clamped = false;
+  if (lookback !== "max") {
+    const last = series.months[n - 1];
+    const [ly, lm] = last.split("-").map(Number);
+    const target = `${ly - lookback}-${String(lm).padStart(2, "0")}`;
+    idx = series.months.findIndex((m) => m >= target);
+    if (idx <= 0) {
+      idx = 0;
+      clamped = true;
+    }
+  }
+  if (idx >= n - 1) return null;
+  return {
+    pct: series.closes[n - 1] / series.closes[idx] - 1,
+    from: series.months[idx],
+    clamped,
+  };
+}
+
 function ProductCard({
   product: p,
   history,
+  lookback,
   defaultOpen = false,
 }: {
   product: Product;
   history: HistoryPayload | null;
+  lookback: Lookback;
   defaultOpen?: boolean;
 }) {
   const series = history?.series[p.id];
   const failed = history != null && !series && !p.synthetic;
 
-  const spark = useMemo(
-    () => (p.synthetic ? null : series?.closes.map((c, i) => ({ i, c })) ?? null),
+  const bars = useMemo(
+    () => (series && !p.synthetic ? yearlyReturns(series) : null),
     [series, p.synthetic],
   );
   const stats = useMemo(() => {
@@ -84,6 +169,10 @@ function ProductCard({
     const rets = series.closes.slice(1).map((c, i) => c / series.closes[i] - 1);
     return annualizedStats(rets);
   }, [series, p.synthetic]);
+  const growth = useMemo(
+    () => (series ? growthSince(series, lookback) : null),
+    [series, lookback],
+  );
 
   return (
     <Card className="flex flex-col">
@@ -116,20 +205,46 @@ function ProductCard({
 
       <p className="mt-3 text-sm leading-relaxed text-stone-300">{p.blurb}</p>
 
-      {spark && spark.length > 1 && (
-        <div className="mt-3 h-12">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={spark} margin={{ top: 2, right: 0, bottom: 2, left: 0 }}>
-              <YAxis hide domain={["dataMin", "dataMax"]} />
-              <Line
-                dataKey="c"
-                stroke={CHART.portfolio}
-                strokeWidth={1.5}
-                dot={false}
-                isAnimationActive={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+      {bars && bars.length > 0 && (
+        <div className="mt-3">
+          <div className="text-[10px] uppercase tracking-wider text-stone-500">
+            Each year's return
+          </div>
+          <div className="mt-1 h-20">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={bars} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
+                <XAxis
+                  dataKey="year"
+                  {...axisProps}
+                  fontSize={9}
+                  tickFormatter={(y: string) => `’${y.slice(2)}`}
+                  interval={bars.length > 9 ? 1 : 0}
+                />
+                <YAxis hide />
+                <ReferenceLine y={0} stroke="rgba(242,239,230,0.25)" />
+                <Tooltip
+                  {...tooltipStyle}
+                  cursor={{ fill: "rgba(242,239,230,0.05)" }}
+                  formatter={(v: number) => [
+                    `${v >= 0 ? "+" : ""}${(v * 100).toFixed(1)}%`,
+                    "return",
+                  ]}
+                  labelFormatter={(y: string) =>
+                    bars.find((b) => b.year === y)?.ytd ? `${y} so far` : y
+                  }
+                />
+                <Bar dataKey="ret" isAnimationActive={false} radius={[2, 2, 0, 0]}>
+                  {bars.map((b) => (
+                    <Cell
+                      key={b.year}
+                      fill={b.ret >= 0 ? CHART.portfolio : CHART.bad}
+                      opacity={b.ytd ? 0.45 : 0.9}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       )}
       {series && stats && (
@@ -140,6 +255,22 @@ function ProductCard({
           </span>
         </div>
       )}
+
+      {growth && (
+        <div className="mt-3 rounded-xl border border-emerald-100/10 bg-emerald-400/5 px-3 py-2">
+          <span className={`text-lg font-semibold tabular ${growth.pct >= 0 ? "text-emerald-300" : "text-rose-300"}`}>
+            {growth.pct >= 0 ? "+" : ""}
+            {(growth.pct * 100).toFixed(0)}%
+          </span>
+          <span className="ml-2 text-xs text-stone-400 tabular">
+            since {fmtMonth(growth.from)}
+            {growth.clamped && " (launch)"} — {fmtGBP(100)} then is{" "}
+            {fmtGBP(Math.round(100 * (1 + growth.pct)))} now
+            {p.synthetic && " (modelled)"}
+          </span>
+        </div>
+      )}
+
       {p.synthetic && (
         <div className="mt-3 rounded-lg border border-sky-400/20 bg-sky-400/5 px-3 py-2 text-[11px] text-sky-200/80">
           Modelled at {fmtPct(p.assumedReturn, 1)} AER (variable interest, not market

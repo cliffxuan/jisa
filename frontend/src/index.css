@@ -93,6 +93,31 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.15);
 }
 
+/* iOS Safari force-zooms the page when a focused input's font is under
+   16px — keep inputs at 16px on small screens so tapping a field never
+   zooms. */
+@media (max-width: 640px) {
+  .field {
+    font-size: 16px;
+  }
+}
+
+/* Fatter slider thumbs on touchscreens — sliders are the app's primary
+   control and an 18px thumb is fiddly under a thumb. */
+@media (pointer: coarse) {
+  input[type="range"] {
+    height: 8px;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    width: 28px;
+    height: 28px;
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 28px;
+    height: 28px;
+  }
+}
+
 @keyframes rise {
   from {
     opacity: 0;

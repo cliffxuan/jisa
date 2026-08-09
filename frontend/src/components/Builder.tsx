@@ -102,7 +102,7 @@ export function Builder({
                   key={p.id}
                   className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 sm:grid-cols-[220px_1fr_auto]"
                 >
-                  <div className="flex items-center gap-2 text-sm">
+                  <div className="order-1 flex items-center gap-2 text-sm">
                     <RiskDial level={p.riskLevel} />
                     <span className={w > 0 ? "text-stone-100" : "text-stone-500"}>{p.name}</span>
                   </div>
@@ -113,10 +113,10 @@ export function Builder({
                     step={5}
                     value={w}
                     onChange={(e) => setWeight(p.id, Number(e.target.value))}
-                    className="col-span-2 w-full sm:col-span-1"
+                    className="order-3 col-span-2 w-full sm:order-2 sm:col-span-1"
                   />
                   <div
-                    className={`hidden w-12 text-right text-sm tabular sm:block ${
+                    className={`order-2 w-12 text-right text-sm tabular sm:order-3 ${
                       w > 0 ? "text-emerald-300" : "text-stone-600"
                     }`}
                   >

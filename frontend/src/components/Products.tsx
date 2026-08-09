@@ -173,6 +173,12 @@ function ProductCard({
     () => (series ? growthSince(series, lookback) : null),
     [series, lookback],
   );
+  // Long education panels stay collapsed on phones — the page is a marathon
+  // scroll otherwise. `open` is only the initial state, so reading the media
+  // query at first render is enough.
+  const open =
+    defaultOpen &&
+    (typeof window === "undefined" || window.matchMedia("(min-width: 640px)").matches);
 
   return (
     <Card className="flex flex-col">
@@ -299,7 +305,7 @@ function ProductCard({
         </div>
       </dl>
 
-      <details className="group mt-3 rounded-xl border border-emerald-100/10 bg-emerald-400/5" open={defaultOpen}>
+      <details className="group mt-3 rounded-xl border border-emerald-100/10 bg-emerald-400/5" open={open}>
         <summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2 text-xs font-semibold text-emerald-300 [&::-webkit-details-marker]:hidden">
           <GraduationCap size={13} />
           The idea, properly

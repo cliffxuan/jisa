@@ -1,0 +1,13 @@
+{
+  "name": "Grow It · The Junior ISA Planner",
+  "short_name": "Grow It",
+  "description": "Explore funds, build a mix, look back with real history, look forward to 18.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a1210",
+  "theme_color": "#0a1210",
+  "icons": [
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

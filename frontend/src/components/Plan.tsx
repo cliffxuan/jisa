@@ -324,10 +324,10 @@ export function Plan({
                     <button
                       type="button"
                       onClick={() => removeContribution(c.id)}
-                      className="text-stone-600 transition hover:text-rose-300"
+                      className="-m-2 p-2 text-stone-600 transition hover:text-rose-300"
                       aria-label="Delete"
                     >
-                      <Trash2 size={13} />
+                      <Trash2 size={14} />
                     </button>
                   </li>
                 ))}

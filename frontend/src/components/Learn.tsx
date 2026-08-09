@@ -3,6 +3,7 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  ReferenceDot,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -168,9 +169,9 @@ function CompoundingDemo() {
         Growth earns growth. Watch the gap open between what you put in and what
         it becomes:
       </p>
-      <div className="mt-4 h-40">
+      <div className="mt-4 h-44">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
+          <AreaChart data={data} margin={{ top: 16, right: 8, bottom: 0, left: 0 }}>
             <CartesianGrid stroke={CHART.grid} vertical={false} />
             <XAxis
               dataKey="year"
@@ -178,7 +179,14 @@ function CompoundingDemo() {
               ticks={data.filter((d) => Number.isInteger(d.year) && d.year > 0).map((d) => d.year)}
               tickFormatter={(v: number) => `${v}y`}
             />
-            <YAxis hide domain={[0, "dataMax"]} />
+            <YAxis
+              {...axisProps}
+              width={40}
+              domain={[0, "dataMax"]}
+              tickFormatter={(v: number) =>
+                v >= 1000 ? `£${Math.round(v / 1000)}k` : `£${v}`
+              }
+            />
             <Tooltip
               {...tooltipStyle}
               formatter={(v: number, name: string) => [
@@ -201,6 +209,36 @@ function CompoundingDemo() {
               fill="transparent"
               strokeWidth={1.5}
               isAnimationActive={false}
+            />
+            {/* Phones don't hover — pin the end values on the chart. */}
+            <ReferenceDot
+              x={last.year}
+              y={last.value}
+              r={3}
+              fill={CHART.portfolio}
+              stroke="#0a1210"
+              label={{
+                value: fmtGBP(last.value),
+                position: "left",
+                dy: -10,
+                fill: CHART.portfolio,
+                fontSize: 12,
+                fontWeight: 600,
+              }}
+            />
+            <ReferenceDot
+              x={last.year}
+              y={last.paidIn}
+              r={3}
+              fill={CHART.paidIn}
+              stroke="#0a1210"
+              label={{
+                value: fmtGBP(last.paidIn),
+                position: "left",
+                dy: 20,
+                fill: CHART.paidIn,
+                fontSize: 11,
+              }}
             />
           </AreaChart>
         </ResponsiveContainer>

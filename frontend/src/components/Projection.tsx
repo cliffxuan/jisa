@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Area,
   CartesianGrid,
@@ -46,6 +46,19 @@ export function Projection({
   const [horizon, setHorizon] = useState<18 | 25>(18);
   const [mode, setMode] = useState<Mode>("expected");
   const [seed, setSeed] = useState(42);
+
+  // Re-sync the inputs when the profile's assumptions change elsewhere (the
+  // Start-here wizard writes them); this section never writes them back, so
+  // the effect can't clobber in-section edits.
+  useEffect(() => {
+    setMonthly(profile.assumptions.monthly);
+    setGift(profile.assumptions.annualGift);
+    setGiftMonth(profile.assumptions.giftMonth);
+  }, [
+    profile.assumptions.monthly,
+    profile.assumptions.annualGift,
+    profile.assumptions.giftMonth,
+  ]);
 
   const selectedIds = PRODUCTS.filter((p) => (profile.allocation[p.id] ?? 0) > 0).map(
     (p) => p.id,

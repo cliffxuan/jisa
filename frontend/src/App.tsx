@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Hero } from "./components/Hero";
 import { Nav } from "./components/Nav";
+import { StartHere } from "./components/StartHere";
 import { Learn } from "./components/Learn";
 import { Products } from "./components/Products";
 import { Builder } from "./components/Builder";
@@ -65,6 +66,7 @@ export default function App() {
     <div id="top" className="min-h-screen bg-[#0a1210] text-stone-100">
       <Hero profile={profile} />
       <Nav />
+      <StartHere profile={profile} updateProfile={updateProfile} />
       {err && (
         <div className="mx-auto mt-6 max-w-6xl px-5">
           <p className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">

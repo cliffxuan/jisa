@@ -10,7 +10,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Download, Plus, Trash2, Upload } from "lucide-react";
+import { Download, Plus, RotateCcw, Trash2, Upload } from "lucide-react";
+import { resetWizard } from "./StartHere";
 import { Card, Section, Stat } from "./Section";
 import { CHART, axisProps, tooltipStyle } from "../chartTheme";
 import { JISA_LIMIT, PRODUCTS, fmtDate, fmtGBP, fmtMonth } from "../data";
@@ -169,6 +170,17 @@ export function Plan({
       blurb="Every birthday tenner from grandma, recorded here. Saved only in this browser — it's your private ledger. Export a backup now and then; nothing leaves your device."
     >
       <div className="mb-6 flex flex-wrap items-center justify-end gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            resetWizard();
+            window.location.hash = "";
+            window.location.reload();
+          }}
+          className="inline-flex items-center gap-1.5 rounded-full border border-stone-100/15 px-3 py-1.5 text-xs text-stone-300 transition hover:border-amber-400/40"
+        >
+          <RotateCcw size={13} /> Redo the 2-minute setup
+        </button>
         <button
           type="button"
           onClick={() => exportStore(store)}

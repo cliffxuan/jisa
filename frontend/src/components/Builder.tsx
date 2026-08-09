@@ -170,29 +170,43 @@ export function Builder({
         <div className="space-y-5">
           <Card>
             {donutData.length > 0 ? (
-              <div className="h-44">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={donutData}
-                      dataKey="value"
-                      nameKey="name"
-                      innerRadius="55%"
-                      outerRadius="85%"
-                      paddingAngle={2}
-                      isAnimationActive={false}
-                    >
-                      {donutData.map((d) => (
-                        <Cell key={d.name} fill={d.color} stroke="#0a1210" />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      {...tooltipStyle}
-                      formatter={(v: number, name: string) => [`${v}%`, name]}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
+              <>
+                <div className="h-44">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={donutData}
+                        dataKey="value"
+                        nameKey="name"
+                        innerRadius="55%"
+                        outerRadius="85%"
+                        paddingAngle={2}
+                        isAnimationActive={false}
+                      >
+                        {donutData.map((d) => (
+                          <Cell key={d.name} fill={d.color} stroke="#0a1210" />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        {...tooltipStyle}
+                        formatter={(v: number, name: string) => [`${v}%`, name]}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <ul className="mt-3 space-y-1 text-xs">
+                  {donutData.map((d) => (
+                    <li key={d.name} className="flex items-center gap-2">
+                      <span
+                        className="h-2.5 w-2.5 shrink-0 rounded-full"
+                        style={{ background: d.color }}
+                      />
+                      <span className="flex-1 truncate text-stone-300">{d.name}</span>
+                      <span className="tabular text-stone-400">{d.value}%</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
             ) : (
               <p className="py-10 text-center text-sm text-stone-500">
                 Slide something above zero to see your mix.

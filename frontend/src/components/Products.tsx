@@ -3,6 +3,7 @@ import {
   Bar,
   BarChart,
   Cell,
+  LabelList,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -98,6 +99,39 @@ interface YearBar {
   year: string;
   ret: number;
   ytd: boolean;
+}
+
+/** Always-visible value on each year bar — phones don't hover. Above the bar
+ * for gains, below it for losses; one decimal only when the value is small. */
+function BarValueLabel(props: {
+  x?: number | string;
+  y?: number | string;
+  width?: number | string;
+  height?: number | string;
+  value?: number | string;
+}) {
+  const x = Number(props.x);
+  const y = Number(props.y);
+  const width = Number(props.width);
+  const height = Number(props.height);
+  const v = Number(props.value);
+  if (!Number.isFinite(x) || !Number.isFinite(v)) return null;
+  const pct = v * 100;
+  const text =
+    Math.abs(pct) >= 9.5 ? String(Math.round(pct)) : Math.abs(pct).toFixed(1);
+  const negative = v < 0 && text !== "0.0"; // a rounded-to-zero dip isn't "−0.0"
+  return (
+    <text
+      x={x + width / 2}
+      y={negative ? y + height + 9 : y - 3}
+      textAnchor="middle"
+      fontSize={8.5}
+      fill={negative ? "#fb7185" : "#8b9490"}
+      className="tabular"
+    >
+      {negative ? `−${text}` : text}
+    </text>
+  );
 }
 
 /** Calendar-year returns from year-end closes; the current year is YTD. */
@@ -214,11 +248,11 @@ function ProductCard({
       {bars && bars.length > 0 && (
         <div className="mt-3">
           <div className="text-[10px] uppercase tracking-wider text-stone-500">
-            Each year's return
+            Each year's return, %
           </div>
-          <div className="mt-1 h-20">
+          <div className="mt-1 h-24">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={bars} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
+              <BarChart data={bars} margin={{ top: 12, right: 0, bottom: 0, left: 0 }}>
                 <XAxis
                   dataKey="year"
                   {...axisProps}
@@ -247,6 +281,7 @@ function ProductCard({
                       opacity={b.ytd ? 0.45 : 0.9}
                     />
                   ))}
+                  <LabelList dataKey="ret" content={<BarValueLabel />} />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>

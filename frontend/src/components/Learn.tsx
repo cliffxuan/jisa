@@ -172,7 +172,12 @@ function CompoundingDemo() {
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
             <CartesianGrid stroke={CHART.grid} vertical={false} />
-            <XAxis dataKey="year" {...axisProps} tickFormatter={(v: number) => `${v}y`} />
+            <XAxis
+              dataKey="year"
+              {...axisProps}
+              ticks={data.filter((d) => Number.isInteger(d.year) && d.year > 0).map((d) => d.year)}
+              tickFormatter={(v: number) => `${v}y`}
+            />
             <YAxis hide domain={[0, "dataMax"]} />
             <Tooltip
               {...tooltipStyle}

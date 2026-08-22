@@ -34,7 +34,7 @@ just serve     # production-like: build SPA, serve everything on :8000
 ## Deploy
 
 ```bash
-just deploy    # git push oc main → Dokku builds the Dockerfile
+just deploy    # git push origin main → Dokploy builds the Dockerfile
 ```
 
 See `AGENTS.md` for the full map (data pipeline quirks, conventions, gotchas).

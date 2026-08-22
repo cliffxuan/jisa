@@ -74,13 +74,8 @@ Data pipeline notes (all in `main.py`):
 
 ## Deploy
 
-Dokku on `nuoya.co.uk`, app `jisa`, domain `jisa.algoentropy.com` (TLS via
-dokku-letsencrypt, configured on the host, not in this repo). Remote `oc` =
-`dokku@nuoya.co.uk:jisa`; `just deploy` = `git push oc main`, which builds the
-Dockerfile in-container. GitHub mirror: remote `origin` =
-`git@github.com:cliffxuan/jisa.git`. Unlike spacex, both remotes share one
-history (GitHub's LICENSE root commit was merged in) — push `main` to both,
-no cherry-picking needed.
+Dokploy app `jisa` on `dokploy.algoentropy.com`. Remote `origin` = `git@github.com:cliffxuan/jisa.git`. `just deploy` = `git push origin main`, which pushes to GitHub and automatically triggers Dokploy to pull and rebuild the Dockerfile.
+
 
 ## Conventions
 

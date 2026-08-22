@@ -52,6 +52,7 @@ sync-data:
 history:
     curl -s http://localhost:{{port}}/api/history | python3 -m json.tool | head -40
 
-# Deploy to the Dokku host (builds in-container, no local build needed)
+# Deploy to Dokploy (pushes to origin main, auto-deployed by Dokploy)
 deploy:
-    git push oc main
+    git push origin main
+

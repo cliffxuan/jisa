@@ -10,10 +10,10 @@ import type { Profile } from "../storage";
 import { alignSeries, annualizedStats, normalizeWeights, portfolioReturns } from "../calc/returns";
 
 const PRESETS: { label: string; weights: Record<string, number> }[] = [
-  { label: "Classic 40/60", weights: { "rl-mm": 40, vuag: 60 } },
-  { label: "Play it safe", weights: { "hl-cash": 10, "rl-mm": 70, vuag: 20 } },
+  { label: "Classic 40/60", weights: { "rl-mm": 40, "fidelity-us": 60 } },
+  { label: "Play it safe", weights: { "hl-cash": 10, "rl-mm": 70, "fidelity-us": 20 } },
   { label: "Balanced", weights: { ls80: 40, vwrp: 30, vags: 20, "rl-mm": 10 } },
-  { label: "Adventurous", weights: { vwrp: 50, vuag: 30, vfeg: 10, cnx1: 10 } },
+  { label: "Adventurous", weights: { vwrp: 50, "fidelity-us": 30, vfeg: 10, cnx1: 10 } },
 ];
 
 export function Builder({

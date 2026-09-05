@@ -46,20 +46,20 @@ const STARTER_MIXES: {
     key: "steady",
     name: "Steady",
     tagline: "Barely wobbles, grows slowly",
-    weights: { "rl-mm": 80, vuag: 20 },
+    weights: { "rl-mm": 80, "fidelity-us": 20 },
   },
   {
     key: "classic",
     name: "Classic 40/60",
     tagline: "Some calm, some growth — the classic",
-    weights: { "rl-mm": 40, vuag: 60 },
+    weights: { "rl-mm": 40, "fidelity-us": 60 },
     classic: true,
   },
   {
     key: "bold",
     name: "Bold",
     tagline: "Biggest swings, most growing power",
-    weights: { "rl-mm": 10, vuag: 90 },
+    weights: { "rl-mm": 10, "fidelity-us": 90 },
   },
 ];
 

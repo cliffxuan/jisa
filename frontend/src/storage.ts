@@ -36,7 +36,7 @@ export function seedStore(): Store {
       name: "Me",
       dob: `${year - 15}-01-01`,
       startingBalance: 0,
-      allocation: { "rl-mm": 40, vuag: 60 },
+      allocation: { "rl-mm": 40, "fidelity-us": 60 },
       contributions: [],
       assumptions: { monthly: 0, annualGift: 500, giftMonth: 12 },
     },
@@ -54,11 +54,17 @@ function isProfileLike(p: unknown): p is Profile {
 }
 
 function normalizeProfile(p: Profile): Profile {
+  const allocation =
+    p.allocation && typeof p.allocation === "object" ? { ...p.allocation } : {};
+  if ("vuag" in allocation) {
+    allocation["fidelity-us"] = (allocation["fidelity-us"] ?? 0) + allocation["vuag"];
+    delete allocation["vuag"];
+  }
   return {
     name: p.name || "Me",
     dob: p.dob,
     startingBalance: Number(p.startingBalance) || 0,
-    allocation: p.allocation && typeof p.allocation === "object" ? p.allocation : {},
+    allocation,
     contributions: Array.isArray(p.contributions) ? p.contributions : [],
     assumptions: p.assumptions ?? { monthly: 0, annualGift: 0, giftMonth: 12 },
   };

@@ -5,7 +5,7 @@ a Hargreaves Lansdown Junior ISA. Personal and individual by design — each
 child opens it in their own browser and gets one private profile. It teaches
 the basics (JISA rules, risk, compounding, park-it/lend-it/own-it), leads with
 a simple core trio (HL cash at 0.80% AER · Royal London money market fund ·
-Vanguard S&P 500) with 10 more products behind an "explore" toggle, and lets
+Fidelity Index US) with 10 more products behind an "explore" toggle, and lets
 the child build a weighted mix, **backtest** it against real monthly history,
 **project** it to age 18 (deterministic band + bootstrap Monte Carlo), and
 **log real contributions** against the £9,000/tax-year cap. Fees are shown
